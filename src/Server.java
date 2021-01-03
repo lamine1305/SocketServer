@@ -1,46 +1,29 @@
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+    import java.io.*;
+    import java.net.ServerSocket;
+    import java.net.Socket;
+    import java.util.ArrayList;
+    import java.util.List;
 
-public class Server {
-
-    public static void main(String[] args) {
-
-        try{
-        ServerSocket ss= new ServerSocket(4201);
-        System.out.println("Attente d'une connexion client ...");
-        Socket so = ss.accept();
-        System.out.println("Un client vient de se connecter ...");
-
-        InputStream in = so.getInputStream();
-        InputStreamReader isr = new InputStreamReader(in);
-        BufferedReader bfr= new BufferedReader(isr);
-
-        OutputStream out = so.getOutputStream();
-        PrintWriter pw=new PrintWriter(out,true);
-
-      /*  String ident =bfr.readLine();
-        System.out.println("le client est connexté ");*/
-        pw.println("Bienvenu à toi ");
-        System.out.println("DEBUT DE LA CONVERSATION AVEC LE CLIENT . . .");
-        String sendMessage ="Vous etes maintenant connecté au serveur...";
-        pw.println(sendMessage);
-        while (true)
-        {
-            String receiveMessage =bfr.readLine();
-            System.out.println("le client dit " + receiveMessage);
+    public class Server extends  Thread {
+        ServerSocket ss = null;
+        List<String> listClient= new ArrayList<>();
+        @Override
+        public void run() {
             try {
-                Thread.sleep(1);
-            }catch(Exception e) {
-                System.out.println("erreur sur le timer ");
+                ss = new ServerSocket(4201);
+                while (true) {
+                    System.out.println("Attente d'une connexion client ...");
+                    Socket so = ss.accept();
+                    listClient.add(so.getInetAddress().getHostName());
+                    Conversation c = new Conversation(so);
+                    c.start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
+        public static void main(String[] args) {
+        Server s = new Server();
+        s.run();
         }
-
-
-
-}
+            }
