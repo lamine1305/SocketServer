@@ -4,6 +4,9 @@ import java.net.Socket;
 public class Conversation extends Thread {
 
     private Socket socket;
+    private String clientEmeteur;
+    private String clientRecepteur;
+    private String messageNet;
     private static int numClient = 0 ;
     public Conversation(Socket socket) {
         this.socket = socket;
@@ -26,10 +29,21 @@ public class Conversation extends Thread {
                 String receiveMessage = bfr.readLine();
                 if(receiveMessage != null) {
                     System.out.println("le client dit " + receiveMessage);
+                    decoderMsg(receiveMessage);
                 }
                 }
         }catch (IOException e){
             System.out.println("erreur lors de la construction des flux E/S !!!");
         }
     }
+
+    private void decoderMsg(String msg){
+        if(!msg.equals("***... Hello serveur ...***")) {
+            String[] decoupageMsg = msg.split(",");
+            this.clientEmeteur = decoupageMsg[0].split("<<<")[1].split(">>>")[0];
+            this.clientRecepteur = decoupageMsg[1].split("<<<")[1].split(">>>")[0];
+            this.messageNet = decoupageMsg[1].split(">>>")[1];
+            System.out.println(clientEmeteur + " " + clientRecepteur + " " + messageNet);
+        }
+        }
 }

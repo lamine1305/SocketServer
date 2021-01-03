@@ -14,7 +14,6 @@
                 while (true) {
                     System.out.println("Attente d'une connexion client ...");
                     Socket so = ss.accept();
-                    listClient.add(so.getInetAddress().getHostName());
                     Conversation c = new Conversation(so);
                     c.start();
                 }
